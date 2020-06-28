@@ -1,0 +1,14 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>The Constant Gardener</title>
+        {% endif %}
+    </head>
+    <body>
+        <h1>Hello, and welcome {{ user.username }}</h1>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

@@ -11,12 +11,15 @@
 
     </head>
     <body>        
-        <h1>Hello, and welcome</h1>
-        {% if current_user.is_anonymous %}
-        <p><a href="{{ url_for('login') }}">Login</a></p>
-        {% else %}
-        <p><a href="{{ url_for('logout') }}">Logout</a></p>
-        {% endif %}
+        <h1>The Constant Gardener</h1>
+        <p>
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </p>
         <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}

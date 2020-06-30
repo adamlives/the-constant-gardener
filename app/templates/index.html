@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% if current_user.is_anonymous %}
+    <h2>Welcome!</h2>
+    {% else %}
+    <h2>Welcome back {{ current_user.username }}!</h2>
+    {% endif %}
+    
     {% for plant in plants %}
     <div><p>{{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).calendar() }}.</p></div>
     {% endfor %}

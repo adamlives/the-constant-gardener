@@ -2,8 +2,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 from wtforms.fields.html5 import DateField, TimeField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 from app.models import Plant
+from app import images
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -14,8 +16,9 @@ class LoginForm(FlaskForm):
 class PlantRegistrationForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
-    last_watered_date = DateField('Last Watered', format='%Y-%m-%d')
-    last_watered_time = TimeField('Last Watered', format='%H:%M')
+    last_watered_date = DateField('Last Watered Date', format='%Y-%m-%d')
+    last_watered_time = TimeField('Last Watered Time', format='%H:%M')
+    photo = FileField("Photo", validators=[FileRequired(), FileAllowed(images, 'Images only')])
     submit = SubmitField('Add Plant')
 
     def validate_name(self, name):

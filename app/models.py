@@ -30,6 +30,8 @@ class Plant(db.Model):
     name = db.Column(db.String(64), index=True, unique=True)
     location = db.Column(db.String(64), index=True, unique=False)
     last_watered = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    image_filename = db.Column(db.String)
+    image_url = db.Column(db.String)
     waterings = db.relationship('Watering', backref='plant_name', lazy='dynamic')
 
     def __repr__(self):

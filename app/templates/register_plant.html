@@ -2,7 +2,7 @@
 
 {% block content %}
     <h2>Register Plant</h2>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <p>
             {{ form.name.label }}<br>
@@ -20,17 +20,16 @@
         </p>
         <p>
             {{ form.last_watered_date.label }}<br>
-            {{ form.last_watered_date() }}<br>
+            {{ form.last_watered_date() }} {{ form.last_watered_time() }}<br>
             {% for error in form.last_watered_date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            {% for error in form.last_watered_time.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
-            {{ form.last_watered_time.label }}<br>
-            {{ form.last_watered_time() }}<br>
-            {% for error in form.last_watered_time.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+            {{ form.photo() }}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

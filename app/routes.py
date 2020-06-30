@@ -1,10 +1,12 @@
 from datetime import datetime
+import os
 
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+# from werkzeug.utils import secure_filename
 
-from app import app, db
+from app import app, db, images
 from app.models import User, Plant, Watering
 from app.forms import LoginForm, PlantRegistrationForm
 
@@ -42,7 +44,16 @@ def register_plant():
     form = PlantRegistrationForm()
     if form.validate_on_submit():
         last_watered_datetime = datetime.combine(form.last_watered_date.data, form.last_watered_time.data)
-        plant = Plant(name=form.name.data, location=form.location.data, last_watered=last_watered_datetime)
+        
+        filename = images.save(request.files['photo'])
+        url = images.url(filename)
+
+        # f = form.photo.data
+        # filename = secure_filename(f.filename)
+        # f.save(os.path.join(app.instance_path, 'photos', filename))
+
+        plant = Plant(name=form.name.data, location=form.location.data, last_watered=last_watered_datetime, image_filename=filename, image_url=url)
+
         db.session.add(plant)
         db.session.commit()
         flash('Congratulations, new plant registered')

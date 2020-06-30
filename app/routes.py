@@ -1,33 +1,36 @@
-from flask import render_template
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
 
 from app import app
-from app.models import Plant, Watering
+from app.models import User, Plant, Watering
+from app.forms import LoginForm
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
-    user = {'username': 'Adam'}
     plants = Plant.query.all()
-    '''for plant in plants:
-        pw = Plant.query
-            .join(Watering)
-            .add_columns(Plant.name, Plant.location, Watering.timestamp)
-            .filter(Plant.name==plant.name)
-            .order_by(Watering.timestamp.desc())
-            .all()
+    return render_template('index.html', title='The Constant Gardener', plants=plants)
 
-    plants = [
-        {
-            'name': 'Spike',
-            'location': 'Back Room',
-            'last_watered_time': '15:15',
-            'last_watered_date': '28Jun2020'
-        },
-        {
-            'name': 'Jonathan',
-            'location': 'Hall',
-            'last_watered_time': '08:30',
-            'last_watered_date': '27Jun2020'
-        }
-    ]'''
-    return render_template('index.html', title='The Constant Gardener', user=user, plants=plants)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password') 
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+    return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))

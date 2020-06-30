@@ -6,8 +6,10 @@
     {% else %}
     <h2>Welcome back {{ current_user.username }}!</h2>
     {% endif %}
-    
+
     {% for plant in plants %}
-    <div><p>{{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).calendar() }}.</p></div>
+    <div><p>{{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).format("LLLL") }}.</p></div>
     {% endfor %}
+
+    <p>New plant? <a href="{{ url_for('register_plant') }}">Click to register</a></p>
 {% endblock %}

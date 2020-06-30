@@ -1,14 +1,15 @@
+from datetime import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
-from app import app
+from app import app, db
 from app.models import User, Plant, Watering
-from app.forms import LoginForm
+from app.forms import LoginForm, PlantRegistrationForm
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     plants = Plant.query.all()
     return render_template('index.html', title='The Constant Gardener', plants=plants)
@@ -34,3 +35,16 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/register_plant', methods=['GET', 'POST'])
+@login_required
+def register_plant():
+    form = PlantRegistrationForm()
+    if form.validate_on_submit():
+        last_watered_datetime = datetime.combine(form.last_watered_date.data, form.last_watered_time.data)
+        plant = Plant(name=form.name.data, location=form.location.data, last_watered=last_watered_datetime)
+        db.session.add(plant)
+        db.session.commit()
+        flash('Congratulations, new plant registered')
+        return redirect(url_for('index'))
+    return render_template('register_plant.html', title='Register Plant', form=form)

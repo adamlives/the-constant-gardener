@@ -76,6 +76,8 @@ def set_plant_watered():
         abort(400)
     name = request.json['name']
     p = Plant.query.filter_by(name=name).first()
+    if not p:
+        return jsonify({'response': 'Plant not found'}), 404
     p.last_watered = datetime.utcnow()
     db.session.commit()
     return jsonify({"response": "Done"})

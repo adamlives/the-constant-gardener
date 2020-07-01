@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, ValidationError
 from wtforms.fields.html5 import DateField, TimeField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -25,3 +25,13 @@ class PlantRegistrationForm(FlaskForm):
         plant = Plant.query.filter_by(name=name.data).first()
         if plant is not None:
             raise ValidationError('Please use a different plant name.')
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+class PlantWateringForm(FlaskForm):
+    all_plants = Plant.query.order_by('name').all()
+    choices = [(p.name, p.name) for p in all_plants]
+    plants_to_water = MultiCheckboxField('plants', choices=choices)
+    submit = SubmitField('Water Plants')

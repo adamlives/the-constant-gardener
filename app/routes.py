@@ -1,19 +1,17 @@
 from datetime import datetime
-import os
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify, abort
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-# from werkzeug.utils import secure_filename
 
 from app import app, db, images
 from app.models import User, Plant, Watering
-from app.forms import LoginForm, PlantRegistrationForm
+from app.forms import LoginForm, PlantRegistrationForm, PlantWateringForm
 
 @app.route('/')
 @app.route('/index')
 def index():
-    plants = Plant.query.all()
+    plants = Plant.query.order_by("name").all()
     return render_template('index.html', title='The Constant Gardener', plants=plants)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -48,10 +46,6 @@ def register_plant():
         filename = images.save(request.files['photo'])
         url = images.url(filename)
 
-        # f = form.photo.data
-        # filename = secure_filename(f.filename)
-        # f.save(os.path.join(app.instance_path, 'photos', filename))
-
         plant = Plant(name=form.name.data, location=form.location.data, last_watered=last_watered_datetime, image_filename=filename, image_url=url)
 
         db.session.add(plant)
@@ -59,3 +53,30 @@ def register_plant():
         flash('Congratulations, new plant registered')
         return redirect(url_for('index'))
     return render_template('register_plant.html', title='Register Plant', form=form)
+
+@app.route('/water_plants', methods=['GET', 'POST'])
+@login_required
+def water_plants():
+    form = PlantWateringForm()
+    if form.validate_on_submit():
+
+        for plant in form.plants_to_water.data:
+            p = Plant.query.filter_by(name=plant).first()
+            p.last_watered = datetime.utcnow()
+            db.session.commit()
+        
+        flash('Congratulations, last watered time for plant(s): ' + ','.join(form.plants_to_water.data) + ' recorded')
+        return redirect(url_for('index'))
+    return render_template('water_plants.html', form=form)
+
+@app.route('/gardener/api/v1.0/setWatered', methods=['PUT'])
+def set_plant_watered():
+    print(request.json)
+    if not request.json or not "name" in request.json:
+        abort(400)
+    name = request.json['name']
+    p = Plant.query.filter_by(name=name).first()
+    p.last_watered = datetime.utcnow()
+    db.session.commit()
+    return jsonify({"response": "Done"})
+

@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_login import LoginManager
 from flask_uploads import UploadSet, IMAGES, configure_uploads
+from flask_bootstrap import Bootstrap
 
 from flask import Flask
 from config import Config
@@ -14,7 +15,7 @@ migrate = Migrate(app, db)
 moment = Moment(app)
 login = LoginManager(app)
 login.login_view = 'login'
-
+bootstrap = Bootstrap(app)
 images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
 

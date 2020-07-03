@@ -31,7 +31,5 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class PlantWateringForm(FlaskForm):
-    all_plants = Plant.query.order_by('name').all()
-    choices = [(p.name, p.name) for p in all_plants]
-    plants_to_water = MultiCheckboxField('plants', choices=choices)
+    plants_to_water = MultiCheckboxField('plants')
     submit = SubmitField('Water Plants')

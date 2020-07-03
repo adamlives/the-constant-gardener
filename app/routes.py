@@ -58,6 +58,8 @@ def register_plant():
 @login_required
 def water_plants():
     form = PlantWateringForm()
+    all_plants = Plant.query.order_by('name').all()
+    form.plants_to_water.choices = [(p.name, p.name) for p in all_plants]
     if form.validate_on_submit():
 
         for plant in form.plants_to_water.data:

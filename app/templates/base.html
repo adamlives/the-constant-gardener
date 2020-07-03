@@ -8,8 +8,11 @@
         {% endif %}
 {% endblock %}
 
-{{ moment.include_jquery() }}
-{{ moment.include_moment() }}
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
+{% endblock %}
 
 {% block navbar %}  
     <nav class="navbar navbar-default">

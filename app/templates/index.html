@@ -7,11 +7,20 @@
     <h2>Welcome back {{ current_user.username }}!</h2>
     {% endif %}
 
+    <div class="card-deck">
     {% for plant in plants %}
-    <div><p>{{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).format("LLLL") }}.</p></div>
-    {% if plant.image_url %}
-    <img src="{{ plant.image_url }}" width="400">
-    {% endif %}
+        <div class="card" style="width: 18rem;">
+            {% if plant.image_url %}
+            <img src="{{ plant.image_url }}" class="card-img-top">
+            {% endif %}
+            <div class="card-body">
+                <h4 class="card-title">{{ plant.name }}</h4>
+                <p class="card-text">
+                    {{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).format("LLLL") }}.
+                </p>
+            </div>
+        </div> 
     {% endfor %}
+    </div>
 
 {% endblock %}

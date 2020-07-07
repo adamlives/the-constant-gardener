@@ -11,7 +11,7 @@
         <div class="row">
             {% for plant in plants %}
                 <div class="col-sm-4">
-                    <div class="card" style="width: 18rem;">
+                    <div class="card" style="width: 20rem;">
                         {% if plant.image_url %}
                         <img src="{{ plant.image_url }}" class="card-img-top">
                         {% endif %}
@@ -20,7 +20,7 @@
                             <p class="card-text">
                                 {{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).format("LLLL") }}.
                             </p>
-                            <a href="{{ url_for('manage_plant', id=plant.id) }}" class="btn btn-primary">Manage Plant</a>
+                            <a href="{{ url_for('manage_plant', id=plant.id) }}" class="btn btn-secondary">Manage Plant</a>
                         </div>
                     </div>
                 </div>

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% import 'bootstrap/form.html' as wtf %}
 
 {% block app_content %}
     <h2>Water Plant(s)</h2>
     <form action="" method="post" onsubmit="return confirm('Are you sure you want to set these plants as recently watered?')">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.plants_to_water }}<br>
+            {{ form.plants_to_water(class_="water") }}<br>
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(class_="btn btn-secondary") }}</p>
     </form>
 {% endblock %}

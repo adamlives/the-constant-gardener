@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectMultipleField, widgets
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, Optional
 from wtforms.fields.html5 import DateField, TimeField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
@@ -35,7 +35,15 @@ class PlantWateringForm(FlaskForm):
     submit = SubmitField('Water Plants')
 
 class PlantManagementForm(FlaskForm):
-    location = StringField('Location')
-    photo = FileField("Photo", validators=[FileAllowed(images, 'Images only')])
+    location = StringField('Location', validators=[Optional()])
+    photo = FileField("Photo", validators=[Optional(), FileAllowed(images, 'Images only')])
     action = SubmitField('Update Plant')
     delete = SubmitField('Delete Plant')
+
+    def validate(self):
+        if self.action.data and not self.location.data and not self.photo.data:
+            msg = "Either a location or photo must be provided"
+            self.location.errors = (msg,)
+            self.photo.errors = (msg,)
+            return False
+        return True

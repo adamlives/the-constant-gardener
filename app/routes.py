@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 from flask import render_template, flash, redirect, url_for, request, jsonify, abort
 from flask_login import current_user, login_user, logout_user, login_required
@@ -6,7 +7,7 @@ from werkzeug.urls import url_parse
 
 from app import app, db, images
 from app.models import User, Plant, Watering
-from app.forms import LoginForm, PlantRegistrationForm, PlantWateringForm
+from app.forms import LoginForm, PlantRegistrationForm, PlantWateringForm, PlantManagementForm
 
 @app.route('/')
 @app.route('/index')
@@ -70,6 +71,39 @@ def water_plants():
         flash('Congratulations, last watered time for plant(s): ' + ','.join(form.plants_to_water.data) + ' recorded')
         return redirect(url_for('index'))
     return render_template('water_plants.html', form=form)
+
+@app.route('/manage_plant/<id>', methods=['GET', 'POST'])
+@login_required
+def manage_plant(id):
+    plant = Plant.query.get(id)
+    form = PlantManagementForm()
+    if form.validate_on_submit():        
+        if form.action.data:
+            print("Update the plant")          
+            # if location is not null, update the plant's location
+            if form.location.data:
+                plant.location = form.location.data
+                flash('Congratulations, plant location updated')
+            
+            # if there is a photo, delete the old on and set the new one
+            if request.files['photo']:
+                os.remove(app.config['UPLOADS_DEFAULT_DEST'] + plant.image_filename)
+
+                filename = images.save(request.files['photo'])
+                url = images.url(filename)
+                plant.image_filename=filename
+                plant.image_url=url
+                flash('Congratulations, plant photo updated')
+
+        if form.delete.data:
+            print("delete the plant")
+            db.session.delete(plant)
+            flash('Congratulations, plant deleted')
+        
+        db.session.commit()
+
+        return redirect(url_for('index'))
+    return render_template('manage_plant.html', form=form)
 
 @app.route('/gardener/api/v1.0/setWatered', methods=['PUT'])
 def set_plant_watered():

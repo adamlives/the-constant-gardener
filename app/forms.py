@@ -33,3 +33,9 @@ class MultiCheckboxField(SelectMultipleField):
 class PlantWateringForm(FlaskForm):
     plants_to_water = MultiCheckboxField('plants')
     submit = SubmitField('Water Plants')
+
+class PlantManagementForm(FlaskForm):
+    location = StringField('Location')
+    photo = FileField("Photo", validators=[FileAllowed(images, 'Images only')])
+    action = SubmitField('Update Plant')
+    delete = SubmitField('Delete Plant')

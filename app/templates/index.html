@@ -20,6 +20,7 @@
                             <p class="card-text">
                                 {{ plant.name }} is located in the {{ plant.location }} and was last watered {{ moment(plant.last_watered).format("LLLL") }}.
                             </p>
+                            <a href="{{ url_for('manage_plant', id=plant.id) }}" class="btn btn-primary">Manage Plant</a>
                         </div>
                     </div>
                 </div>

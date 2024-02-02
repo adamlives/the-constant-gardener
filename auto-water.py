@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 import requests
 
 def send_notification(mail_to, mail_subject, mail_text):
-    gmail_SENDER = 'adamshackleton1310@gmail.com'
+    gmail_SENDER = ''
     gmail_PASSWORD = ''
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
